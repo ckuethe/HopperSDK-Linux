@@ -1,0 +1,35 @@
+Index: Source/NSArray.m
+===================================================================
+--- Source/NSArray.m	(révision 37790)
++++ Source/NSArray.m	(copie de travail)
+@@ -1200,6 +1200,14 @@
+        * For a search from the left, we'd have the correct index anyways. Check
+        * whether it's equal to the key and return NSNotFound otherwise
+        */
++      if (index >= count) {
++          if (options & NSBinarySearchingInsertionIndex) {
++              return index;
++          }
++          else {
++              return NSNotFound;
++          }
++      }
+       return (NSOrderedSame == CALL_BLOCK(comparator,
+         key, [self objectAtIndex: index]) ? index : NSNotFound);
+     }
+@@ -2025,7 +2033,14 @@
+ 
+ - (void) setObject: (id)anObject atIndexedSubscript: (size_t)anIndex
+ {
+-  [self replaceObjectAtIndex: (NSUInteger)anIndex withObject: anObject];
++  if (anIndex == [self count]) {
++    // From Apple documentation of -[NSMutableArray setObject:atIndexedSubscript:]
++    // "If the index is equal to count the element is added to the end of the array, growing the array."
++    [self addObject:anObject];
++  }
++  else {
++    [self replaceObjectAtIndex: (NSUInteger)anIndex withObject: anObject];
++  }
+ }
+ 
+ /** Replaces the values in the receiver at the locations given by the
