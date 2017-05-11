@@ -21,40 +21,40 @@ CXX=clang++
 ## Cleanup
 echo "Cleaning"
 rm -rf "$DEST"
-rm -rf sources ; mkdir sources
+rm -rf sources HopperSDK
+mkdir sources HopperSDK
 
 ## Download latest Hopper SDK
-echo "Downloading Hopper SDK"
-curl -A SDK -L --progress-bar -o HopperSDK-${SDKVER}.zip "https://d2ap6ypl1xbe4k.cloudfront.net/HopperSDK-${SDKVER}.zip"
-rm -rf HopperSDK ; mkdir HopperSDK
-cd HopperSDK ; unzip ../HopperSDK-${SDKVER}.zip >/dev/null && rm ../HopperSDK-${SDKVER}.zip ; cd ..
+echo "Downloading sources"
+echo "  Hopper SDK"
+SDKZIP="sources/HopperSDK-${SDKVER}.zip"
+curl -A SDK -L --progress-bar -o $SDKZIP "https://d2ap6ypl1xbe4k.cloudfront.net/HopperSDK-${SDKVER}.zip"
+unzip -d HopperSDK $SDKZIP >/dev/null 2>&1
 
 ## Download sources
-echo "Downloading sources"
 cd sources
 echo "  libobjc2..."
-git clone https://github.com/gnustep/libobjc2 gnustep-libobjc2 >/dev/null
+git clone -q https://github.com/gnustep/libobjc2 gnustep-libobjc2
 echo "  gnustep-make..."
-git clone https://github.com/gnustep/make gnustep-make >/dev/null
-git -C gnustep-make checkout -q $GNUSTEP_MAKE_GIT
+git clone -q https://github.com/gnustep/make gnustep-make
 echo "  gnustep-base..."
-git clone https://github.com/gnustep/base gnustep-base >/dev/null
-git -C gnustep-base checkout -q $GNUSTEP_BASE_GIT
+git clone -q https://github.com/gnustep/base gnustep-base
 echo "  libdispatch..."
-git clone https://github.com/nickhutchinson/libdispatch.git >/dev/null
-git -C libdispatch checkout -q $LIBDISPATCH_REV
+git clone -q https://github.com/nickhutchinson/libdispatch.git
 
 ## Compilation
 echo "Compilation"
-
+SRC=$(pwd)
 ## Compile gnustep-make
 echo "  gnustep-make..."
 cd gnustep-make
 ./configure CC=$CC CXX=$CXX --with-layout=$LAYOUT --prefix="$DEST"
 make
 make install
-cd ..
+cd "$DEST/bin"
+ln -s "../share/GNUstep/Makefiles/GNUstep.sh"
 
+cd $SRC
 . "$DEST/share/GNUstep/Makefiles/GNUstep.sh"
 
 ## Compile the Objective-C 2 runtime
@@ -64,13 +64,13 @@ rm -rf build ; mkdir build ; cd build
 cmake .. -DCMAKE_INSTALL_PREFIX="$DEST" -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX
 make -j$JOBS
 make install
-cd ../../
+cd $SRC
 
 cd gnustep-make
 ./configure CC=$CC CXX=$CXX --enable-objc-nonfragile-abi --with-layout=$LAYOUT --prefix="$DEST"
 make
 make install
-cd ..
+cd $SRC
 
 . "$DEST/share/GNUstep/Makefiles/GNUstep.sh"
 
@@ -79,22 +79,22 @@ cd ..
 echo "  gnustep-base..."
 cd gnustep-base
 patch -p0 <../../patches/gnustep-base.patch
-./configure CC=$CC CXX=$CXX --prefix="$DEST" # --disable-xslt --disable-tls
+./configure CC=$CC CXX=$CXX --prefix="$DEST"
 make -j$JOBS 2>/dev/null
 make install
-cd ..
+cd $SRC
 
 ## Compile libdispatch
 echo "  libdispatch..."
 cd libdispatch
-patch -p1 <../../patches/libdispatch.patch || exit 1
+patch -p1 <../../patches/libdispatch.patch
 sed -i"" "s/add_subdirectory(testing)/#add_subdirectory(testing)/" CMakeLists.txt
 mkdir build
 cd build
 cmake .. -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_INSTALL_PREFIX="$DEST" -DCMAKE_BUILD_TYPE=Release
 make
 make install
-cd ../..
+cd $SRC
 
 ## Let's test that all is fine by compiling a small Objective-C program
 echo "Testing"
@@ -141,5 +141,7 @@ int main(int argc, char **argv) {
 }
 _EOF
 
-clang test.m -o test $(gnustep-config --objc-flags) $(gnustep-config --base-libs) -fobjc-arc -fobjc-nonfragile-abi -O0 -g -ldispatch && ./test && echo "ALL DONE"
-
+clang test.m -o test $(gnustep-config --objc-flags) $(gnustep-config --base-libs) -fobjc-arc -fobjc-nonfragile-abi -O0 -g -ldispatch
+./test
+echo "GNUstep for Hopper SDK ready."
+echo "source '$DEST/bin/GNUstep.sh' to use it"
