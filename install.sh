@@ -37,10 +37,13 @@ echo "  libobjc2..."
 git clone -q https://github.com/gnustep/libobjc2 gnustep-libobjc2
 echo "  gnustep-make..."
 git clone -q https://github.com/gnustep/make gnustep-make
+git -C gnustep-make checkout -q $GNUSTEP_MAKE_GIT
 echo "  gnustep-base..."
 git clone -q https://github.com/gnustep/base gnustep-base
+git -C gnustep-base checkout -q $GNUSTEP_BASE_GIT
 echo "  libdispatch..."
 git clone -q https://github.com/nickhutchinson/libdispatch.git
+git -C libdispatch checkout -q $LIBDISPATCH_REV
 
 ## Compilation
 echo "Compilation"

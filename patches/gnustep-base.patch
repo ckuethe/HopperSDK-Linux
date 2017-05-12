@@ -17,3 +17,19 @@ Index: Source/NSArray.m
        return (NSOrderedSame == CALL_BLOCK(comparator,
          key, [self objectAtIndex: index]) ? index : NSNotFound);
      }
+@@ -2025,7 +2033,14 @@
+ 
+ - (void) setObject: (id)anObject atIndexedSubscript: (size_t)anIndex
+ {
+-  [self replaceObjectAtIndex: (NSUInteger)anIndex withObject: anObject];
++  if (anIndex == [self count]) {
++    // From Apple documentation of -[NSMutableArray setObject:atIndexedSubscript:]
++    // "If the index is equal to count the element is added to the end of the array, growing the array."
++    [self addObject:anObject];
++  }
++  else {
++    [self replaceObjectAtIndex: (NSUInteger)anIndex withObject: anObject];
++  }
+ }
+ 
+ /** Replaces the values in the receiver at the locations given by the
