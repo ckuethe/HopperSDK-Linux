@@ -1,8 +1,8 @@
 # Introduction
 
 This is an update of the Hopper
-[Linux SDK](https://www.hopperapp.com/blog/?p=150) to match the
-versions of libraries shipped by more recent Hopper builds.  
+[Linux SDK](https://www.hopperapp.com/blog/?p=150) to match the versions
+of libraries shipped by more recent Hopper builds.
 
 # Usage
 
@@ -24,4 +24,4 @@ On a multiuser machine, each user will need to run this SDK installer.
 
 # Notes
 * On recent Ubuntu (17.04) `libxml2-dev` `libgnutls28-dev` `libxslt1-dev`
-`libgcrypt20-dev` are to compile GNUstep base
+`libgcrypt20-dev` are required to compile GNUstep base
