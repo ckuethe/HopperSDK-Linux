@@ -2,13 +2,16 @@
 
 This is an update of the Hopper
 [Linux SDK](https://www.hopperapp.com/blog/?p=150) to match the versions
-of libraries shipped by more recent Hopper builds.
+of libraries shipped by more recent Hopper builds. Download a
+[release](https://github.com/ckuethe/HopperSDK-Linux/releases)
+to match the target version of Hopper.
 
 # Usage
 
 ```
 git clone https://github.com/ckuethe/HopperSDK-Linux
 cd HopperSDK-Linux
+# git checkout v4.1.5 # (optional, match to target Hopper version)
 ./install.sh
 
 . ${HOME}/hopper-gnustep.sh
