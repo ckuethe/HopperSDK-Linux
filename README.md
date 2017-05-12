@@ -26,5 +26,7 @@ to compile plugins - will be installed at `${HOME}/hopper-gnustep.sh`.
 On a multiuser machine, each user will need to run this SDK installer.
 
 # Notes
+* Build prerequisites include `libpthread-workqueue-dev` `libkqueue-dev`
+`clang` `libblocksruntime-devel`
 * On recent Ubuntu (17.04) `libxml2-dev` `libgnutls28-dev` `libxslt1-dev`
-`libgcrypt20-dev` are required to compile GNUstep base
+`libgcrypt20-dev` are also required to compile GNUstep base
