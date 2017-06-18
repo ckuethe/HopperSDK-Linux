@@ -3,7 +3,7 @@
 set -e
 
 ## Variables
-SDKVER=4.2.2
+SDKVER=4.2.3
 GNUSTEP_MAKE_GIT=a964f87bdecab5156ed24f224548680aa2555676 # svn-39575, probably close to what hopper was built with
 GNUSTEP_BASE_GIT=03952f1e961931828a3eba62784c02205e8c0a65 # svn-39569, hopper ships libgnustep-base 1.24.9
 LIBDISPATCH_REV=e63c3c130c5115b653beca04b7f245e20ba84a08 # hopper ships libdispatch 0.1.3.1
